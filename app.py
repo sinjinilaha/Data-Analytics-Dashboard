@@ -38,21 +38,29 @@ if selected_tickers and start_date < end_date:
     primary_ticker = selected_tickers[0]
     primary_df = stock_data[primary_ticker]
 
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Current Price", f"{primary_df['Close'].iloc[-1]:.2f}")
-    col2.metric("Return", f"{((primary_df['Close'].iloc[-1] / primary_df['Close'].iloc[0]) - 1) * 100:.2f}%")
-    col3.metric("Volume", f"{primary_df['Volume'].iloc[-1]:,.0f}")
-    col4.metric("Volatility", f"{calculate_volatility(primary_df) * 100:.2f}%")
+    if primary_df.empty:
+        st.warning("No data returned for the selected stock and date range.")
+    else:
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Current Price", f"{primary_df['Close'].iloc[-1]:.2f}")
+        initial_close_price = primary_df['Close'].iloc[0]
+        if initial_close_price != 0:
+            return_metric = f"{((primary_df['Close'].iloc[-1] / initial_close_price) - 1) * 100:.2f}%"
+        else:
+            return_metric = "N/A"
+        col2.metric("Return", return_metric)
+        col3.metric("Volume", f"{primary_df['Volume'].iloc[-1]:,.0f}")
+        col4.metric("Volatility", f"{calculate_volatility(primary_df) * 100:.2f}%")
 
-    st.plotly_chart(plot_price_chart(primary_df), use_container_width=True)
-    st.plotly_chart(plot_volume_chart(primary_df), use_container_width=True)
+        st.plotly_chart(plot_price_chart(primary_df), use_container_width=True)
+        st.plotly_chart(plot_volume_chart(primary_df), use_container_width=True)
 
-    returns = daily_returns(primary_df)
-    st.plotly_chart(plot_return_chart(returns), use_container_width=True)
+        returns = daily_returns(primary_df)
+        st.plotly_chart(plot_return_chart(returns), use_container_width=True)
 
-    st.subheader("Generated Insights")
-    for line in generate_insights(primary_df):
-        st.write(f"• {line}")
+        st.subheader("Generated Insights")
+        for line in generate_insights(primary_df):
+            st.write(f"• {line}")
 
     if len(stock_data) > 1:
         comparison_df = compare_tickers(stock_data)

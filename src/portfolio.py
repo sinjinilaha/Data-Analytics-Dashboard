@@ -26,7 +26,7 @@ def portfolio_return(stock_data: Dict[str, pd.DataFrame], weights: Dict[str, flo
     if not returns:
         return 0.0
 
-    portfolio_daily = pd.concat(returns, axis=1).sum(axis=1)
+    portfolio_daily = pd.concat(returns, axis=1).fillna(0).sum(axis=1)
     return float((1 + portfolio_daily).prod() - 1)
 
 

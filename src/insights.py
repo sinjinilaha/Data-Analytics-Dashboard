@@ -4,6 +4,9 @@ import pandas as pd
 
 from .analytics import calculate_drawdown, calculate_volatility
 
+SIGNIFICANT_MOVE_THRESHOLD_PERCENT = 10
+HIGH_VOLATILITY_THRESHOLD_PERCENT = 35
+
 
 def generate_insights(df: pd.DataFrame) -> List[str]:
     insights = []
@@ -11,15 +14,20 @@ def generate_insights(df: pd.DataFrame) -> List[str]:
         return ["No data available for insight generation."]
 
     close = df["Close"].astype(float)
-    if len(close) > 20:
-        return_30d = ((close.iloc[-1] / close.iloc[-21]) - 1) * 100
-        if return_30d > 10:
-            insights.append("Stock gained more than 10% in the last month.")
-        elif return_30d < -10:
-            insights.append("Stock lost more than 10% in the last month.")
+    if len(close) >= 21:
+        # Use -21 to compare latest close to roughly one trading month ago (about 20 intervals).
+        return_20d = ((close.iloc[-1] / close.iloc[-21]) - 1) * 100
+        if return_20d > SIGNIFICANT_MOVE_THRESHOLD_PERCENT:
+            insights.append(
+                f"Stock gained more than {SIGNIFICANT_MOVE_THRESHOLD_PERCENT}% in the last month."
+            )
+        elif return_20d < -SIGNIFICANT_MOVE_THRESHOLD_PERCENT:
+            insights.append(
+                f"Stock lost more than {SIGNIFICANT_MOVE_THRESHOLD_PERCENT}% in the last month."
+            )
 
     volatility = calculate_volatility(df) * 100
-    if volatility > 35:
+    if volatility > HIGH_VOLATILITY_THRESHOLD_PERCENT:
         insights.append("Volatility is elevated, indicating higher risk.")
     else:
         insights.append("Volatility remains in a moderate range.")

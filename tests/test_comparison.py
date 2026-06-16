@@ -18,6 +18,10 @@ class TestComparison(unittest.TestCase):
         self.assertEqual(list(result.columns), ["Ticker", "Return", "Volatility", "Volume"])
         self.assertEqual(result.iloc[0]["Ticker"], "AAPL")
 
+    def test_compare_tickers_empty_inputs(self):
+        result = compare_tickers({"AAPL": pd.DataFrame(), "MSFT": pd.DataFrame()})
+        self.assertTrue(result.empty)
+
 
 if __name__ == "__main__":
     unittest.main()

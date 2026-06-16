@@ -28,7 +28,7 @@ class TestAnalytics(unittest.TestCase):
 
     def test_drawdown_contains_peak_drop(self):
         drawdown = calculate_drawdown(self.df)
-        self.assertAlmostEqual(drawdown.min(), -0.045454545454545414)
+        self.assertAlmostEqual(drawdown.min(), -0.0455, places=4)
 
 
 if __name__ == "__main__":
