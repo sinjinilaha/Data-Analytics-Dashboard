@@ -3,7 +3,7 @@
 A modular stock analytics platform with separate layers for data acquisition, preprocessing, analytics, comparison, visualization, insights, and dashboard delivery.
 
 
-<a href="https://your-dashboard.streamlit.app">
+<a href="https://boom-analytics-dashboard.streamlit.app">
    Live Analytics Dashboard
 </a>
 
